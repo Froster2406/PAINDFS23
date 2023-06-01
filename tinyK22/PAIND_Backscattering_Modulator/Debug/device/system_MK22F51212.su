@@ -1,0 +1,3 @@
+../device/system_MK22F51212.c:96:6:SystemInit	8	static
+../device/system_MK22F51212.c:122:6:SystemCoreClockUpdate	16	static
+../device/system_MK22F51212.c:236:29:SystemInitHook	4	static

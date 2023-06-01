@@ -1,0 +1,7 @@
+C:\Users\FrosterOTG\OneDrive - Hochschule Luzern\Module\TA.BA_PAIND+E1.F23\Software_Code\tinyK22\PAIND_Backscattering_Modulator\drivers/fsl_clock.h:842:20:CLOCK_SetSimSafeDivs	4	static
+C:\Users\FrosterOTG\OneDrive - Hochschule Luzern\Module\TA.BA_PAIND+E1.F23\Software_Code\tinyK22\PAIND_Backscattering_Modulator\drivers/fsl_clock.h:1184:20:CLOCK_SetXtal0Freq	16	static
+C:\Users\FrosterOTG\OneDrive - Hochschule Luzern\Module\TA.BA_PAIND+E1.F23\Software_Code\tinyK22\PAIND_Backscattering_Modulator\drivers/fsl_smc.h:256:20:SMC_SetPowerModeProtection	16	static
+C:\Users\FrosterOTG\OneDrive - Hochschule Luzern\Module\TA.BA_PAIND+E1.F23\Software_Code\tinyK22\PAIND_Backscattering_Modulator\drivers/fsl_smc.h:275:33:SMC_GetPowerModeState	16	static
+../board/clock_config.c:73:13:CLOCK_CONFIG_SetFllExtRefDiv	16	static
+../board/clock_config.c:81:6:BOARD_InitBootClocks	8	static
+../board/clock_config.c:164:6:BOARD_BootClockRUN	8	static

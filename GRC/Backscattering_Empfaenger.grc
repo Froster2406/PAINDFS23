@@ -1,0 +1,401 @@
+options:
+  parameters:
+    author: Stefano Nicora
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: qt_gui
+    hier_block_src_path: '.:'
+    id: Backscattering_Empfaenger
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Backscattering - Receiver
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: RX_gain
+  id: variable_qtgui_range
+  parameters:
+    comment: gain adjustment
+    gui_hint: ''
+    label: RX Gain
+    min_len: '200'
+    orient: QtCore.Qt.Horizontal
+    rangeType: float
+    start: '0'
+    step: '1'
+    stop: '60'
+    value: '10'
+    widget: counter_slider
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [600, 8.0]
+    rotation: 0
+    state: enabled
+- name: bit_time_length
+  id: variable
+  parameters:
+    comment: Time in ms for a single Bit
+    value: '10'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [760, 8.0]
+    rotation: 0
+    state: enabled
+- name: chooser
+  id: variable_qtgui_chooser
+  parameters:
+    comment: 'desired channel where carrier
+
+      is transmitted'
+    gui_hint: ''
+    label: ''
+    label0: ''
+    label1: ''
+    label2: ''
+    label3: ''
+    label4: ''
+    labels: '["1","2","3","4","5","6","7","8","9","10","11","12","13"]'
+    num_opts: '0'
+    option0: '0'
+    option1: '1'
+    option2: '2'
+    option3: '3'
+    option4: '4'
+    options: '[2412e6, 2417e6, 2422e6, 2427e6, 2432e6, 2437e6, 2442e6, 2447e6, 2452e6,
+      2457e6, 2462e6, 2467e6, 2472e6]'
+    orient: Qt.QHBoxLayout
+    type: int
+    value: '2422000000'
+    widget: radio_buttons
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [360, 12.0]
+    rotation: 0
+    state: enabled
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: 2e6
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [232, 8.0]
+    rotation: 0
+    state: enabled
+- name: blocks_freqshift_cc_0
+  id: blocks_freqshift_cc
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: 'Remove frequency shift
+
+      in order to minimize the
+
+      needed sample rate'
+    freq: -12.5e6
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    sample_rate: samp_rate
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [304, 288.0]
+    rotation: 0
+    state: enabled
+- name: blocks_repeat_0
+  id: blocks_repeat
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: "Adjust length to match \nbit length in accordance\nwith samp_rate"
+    interp: int((samp_rate*bit_time_length) / 1000)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    type: complex
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [312, 496.0]
+    rotation: 0
+    state: enabled
+- name: blocks_vector_source_x_0_0_0_0_0
+  id: blocks_vector_source_x
+  parameters:
+    affinity: ''
+    alias: ''
+    comment: Preamble reference
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    repeat: 'True'
+    tags: '[]'
+    type: complex
+    vector: (1,1,1,0,0,0,1,0,0,1,0)
+    vlen: '1'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [24, 480.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n\n    def __init__(self):  # only\
+      \ default arguments here\n        gr.sync_block.__init__(\n            self,\n\
+      \            name='Deinterleaving',   # will show up in GRC\n            in_sig=[np.complex64],\n\
+      \            out_sig=[np.complex64]\n        )\n        self.array1 = []\n \
+      \       self.array2 = []\n        self.array3 = []\n        self.array4 = []\n\
+      \        self.array5 = []\n        self.array6 = []\n        self.array7 = []\n\
+      \        self.array8 = []\n        self.counter = 0\n\n    def work(self, input_items,\
+      \ output_items):\n        self.array1[self.counter] = (self.array1[self.counter]\
+      \ | input_items[0].real)\n        self.array2[self.counter] = (self.array2[self.counter]\
+      \ | input_items[0].real)\n        self.array3[self.counter] = (self.array3[self.counter]\
+      \ | input_items[0].real)\n        self.array4[self.counter] = (self.array4[self.counter]\
+      \ | input_items[0].real)\n        self.array5[self.counter] = (self.array5[self.counter]\
+      \ | input_items[0].real)\n        self.array6[self.counter] = (self.array6[self.counter]\
+      \ | input_items[0].real)\n        self.array7[self.counter] = (self.array7[self.counter]\
+      \ | input_items[0].real)\n        self.array8[self.counter] = (self.array8[self.counter]\
+      \ | input_items[0].real)\n        self.counter = self.counter + 1\n        if\
+      \ self.counter == 8:\n            output_items[0][:] = self.array1\n       \
+      \     output_items[0][:] = self.array2\n            output_items[0][:] = self.array3\n\
+      \            output_items[0][:] = self.array4\n            output_items[0][:]\
+      \ = self.array5\n            output_items[0][:] = self.array6\n            output_items[0][:]\
+      \ = self.array7\n            output_items[0][:] = self.array8\n            self.array1\
+      \ = []\n            self.array2 = []\n            self.array3 = []\n       \
+      \     self.array4 = []\n            self.array5 = []\n            self.array6\
+      \ = []\n            self.array7 = []\n            self.array8 = []\n       \
+      \     self.counter = 0\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Deinterleaving', 'blk', [], [('0', 'complex', 1)], [('0', 'complex',
+      1)], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1288, 320.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0_1_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\n\n\nclass blk(gr.sync_block):  # other base classes\
+      \ are basic_block, decim_block, interp_block\n\n\tdef __init__(self):  # only\
+      \ default arguments here\n\t\tgr.sync_block.__init__(\n\t\t\tself,\n\t\t\tname='Hamming',\n\
+      \t\t\tin_sig=[np.complex64,np.complex64],\n\t\t\tout_sig=[np.complex64]\n\t\t\
+      )\n\tdef work(self, input_items, output_items):\n\t\tif input_items[1].real\
+      \ > 10:\n\t\t\t# revert hamming-encoding if preamble value is large enough\n\
+      \t\t\tcolum2or4 = 1\n\t\t\tcolum3or4 = 1\n\t\t\trow2or4 = 1\n\t\t\trow3or4 =\
+      \ 1\n\t\t\tgeneralBitflip = 1\n\t\t\tfaultyBit = 0\n\t\t\t# check if all parity\
+      \ bits are correct | 1 = flip occurred\n\t\t\tif (input_items[0][1].real ^ input_items[0][2].real\
+      \ ^ input_items[0][3].real ^ input_items[0][4].real ^ input_items[0][5].real\
+      \ ^ input_items[0][6].real ^ input_items[0][7].real ^ input_items[0][8].real\
+      \ ^ input_items[0][9].real ^ input_items[0][10].real ^ input_items[0][11].real\
+      \ ^ input_items[0][12].real ^ input_items[0][13].real ^ input_items[0][14].real\
+      \ ^ input_items[0][15].real & 1) == 0:\n\t\t\t\tgeneralBitflip = 0\n\t\t\tif\
+      \ generalBitflip == 1:\n\t\t\t\tprint(\"There has been at least a second bit\
+      \ flip that couldn't be processed. Aborting...\")\n\t\t\t\tquit()\n\t\t\tif\
+      \ (input_items[0][1].real ^ input_items[0][3].real ^ input_items[0][5].real\
+      \ ^ input_items[0][7].real ^ input_items[0][9].real ^ input_items[0][11].real\
+      \ ^ input_items[0][13].real ^ input_items[0][15].real & 1) == 0:\n\t\t\t\tcolum2or4\
+      \ = 0\n\t\t\tif (input_items[0][2].real ^ input_items[0][3].real ^ input_items[0][6].real\
+      \ ^ input_items[0][7].real ^ input_items[0][10].real ^ input_items[0][11].real\
+      \ ^ input_items[0][14].real ^ input_items[0][15].real & 1) == 0:\n\t\t\t\tcolum3or4\
+      \ = 0\n\t\t\tif (input_items[0][4].real ^ input_items[0][5].real ^ input_items[0][6].real\
+      \ ^ input_items[0][7].real ^ input_items[0][12].real ^ input_items[0][13].real\
+      \ ^ input_items[0][14].real ^ input_items[0][15].real & 1) == 0:\n\t\t\t\trow2or4\
+      \ = 0\n\t\t\tif (input_items[0][8].real ^ input_items[0][9].real ^ input_items[0][10].real\
+      \ ^ input_items[0][11].real ^ input_items[0][12].real ^ input_items[0][13].real\
+      \ ^ input_items[0][14].real ^ input_items[0][15].real & 1) == 0:\n\t\t\t\trow3or4\
+      \ = 0\n\t\t\tfaultyBit = (row3or4 << 3) | (row2or4 << 2) | (colum3or4 << 1)\
+      \ | colum2or4 # calculate position of faulty / flipped bit\n\t\t\tif faultyBit\
+      \ != 0:\t# switch wrong bit\n\t\t\t\tinput_items[0][faultyBit] = input_items[0][faultyBit]\
+      \ ^ 1\n\t\t\toutput_items[0][:] = input_items[0]\n\t\treturn len(output_items[0])"
+    affinity: ''
+    alias: ''
+    comment: 'IN 1: continuous data
+
+      IN 2: enable threshold'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Hamming', 'blk', [], [('0', 'complex', 1), ('1', 'complex', 1)],
+      [('0', 'complex', 1)], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1072, 304.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_0_1_1
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport numpy as np\n\
+      from gnuradio import gr\nimport time\n\n\nclass blk(gr.sync_block):  # other\
+      \ base classes are basic_block, decim_block, interp_block\n\n    def __init__(self):\
+      \  # only default arguments here\n        gr.sync_block.__init__(\n        \
+      \    self,\n            name='Print',\n            in_sig=[np.complex64],\n\
+      \            out_sig=[]\n        )\n        i = 0\n    def work(self, input_items,\
+      \ output_items):\n        print(input_items[0].real)\n        time.sleep(0.1)\n"
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Print', 'blk', [], [('0', 'complex', 1)], [], '', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [1536, 320.0]
+    rotation: 0
+    state: enabled
+- name: epy_block_3
+  id: epy_block
+  parameters:
+    _source_code: "import sys\nimport numpy as np\nfrom gnuradio import gr\n\n\nclass\
+      \ blk(gr.sync_block):  # other base classes are basic_block, decim_block, interp_block\n\
+      \    \"\"\"Embedded Python Block example - a simple multiply const\"\"\"\n\n\
+      \    def __init__(self, corr_length=4096):  # only default arguments here\n\
+      \        \"\"\"arguments to this function show up as parameters in GRC\"\"\"\
+      \n        gr.sync_block.__init__(\n            self,\n            name='Correlation',\
+      \   # will show up in GRC\n            in_sig=[np.complex64, np.complex64],\n\
+      \            out_sig=[np.complex64]\n        )\n        \n        # self.logg\
+      \ = gr.logger()\n        self.corr_length = corr_length\n        \n        np.set_printoptions(threshold=sys.maxsize)\n\
+      \        self.buf = np.array([[], []])\n        self.buf_out = np.array(np.zeros(self.corr_length))\n\
+      \        \n    def work(self, input_items, output_items):\n        self.buf\
+      \ = np.concatenate((self.buf, input_items), axis=1)\n        \n        tmp =\
+      \ np.array([])\n        out_len = np.array(output_items).shape[1]\n        \n\
+      \        #print(\"out len \" + str(out_len))\n        \n        while self.buf.shape[1]\
+      \ >= self.corr_length:\n                tmp = self.buf[:, :self.corr_length]\n\
+      \                self.buf = self.buf[:, self.corr_length:]\n               \
+      \ \n                corr = np.flip(np.correlate(tmp[0], tmp[1], 'full')[:self.corr_length])\n\
+      \                self.buf_out = np.concatenate((self.buf_out, corr))\n     \
+      \   \n        output_items[0][:] = self.buf_out[:out_len]\n        self.buf_out\
+      \ = self.buf_out[out_len:]\n        \n        # print(\"tmp \" + str(tmp.shape))\n\
+      \        # print(\"out \" + str(np.array(output_items).shape))\n        \n \
+      \       return len(output_items[0])\n"
+    affinity: ''
+    alias: ''
+    comment: Find preamble in signal
+    corr_length: int((samp_rate*bit_time_length) / 1000)
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('Correlation', 'blk', [('corr_length', '4096')], [('0', 'complex',
+      1), ('1', 'complex', 1)], [('0', 'complex', 1)], 'Embedded Python Block example
+      - a simple multiply const', ['corr_length'])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [848, 476.0]
+    rotation: 0
+    state: enabled
+- name: root_raised_cosine_filter_0
+  id: root_raised_cosine_filter
+  parameters:
+    affinity: ''
+    alias: ''
+    alpha: '0.5'
+    comment: ''
+    decim: '1'
+    gain: '2'
+    interp: '1'
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    ntaps: '16'
+    samp_rate: samp_rate
+    sym_rate: 1/bit_time_length * 1000
+    type: fir_filter_ccf
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [560, 256.0]
+    rotation: 0
+    state: enabled
+- name: soapy_limesdr_source_0
+  id: soapy_limesdr_source
+  parameters:
+    affinity: ''
+    alias: ''
+    bandwidth: '0.0'
+    center_freq: chooser
+    comment: ''
+    dev_args: ''
+    freq_correction: '0'
+    gain: RX_gain
+    maxoutbuf: '0'
+    minoutbuf: '0'
+    samp_rate: samp_rate
+    type: fc32
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [24, 288.0]
+    rotation: 0
+    state: enabled
+
+connections:
+- [blocks_freqshift_cc_0, '0', root_raised_cosine_filter_0, '0']
+- [blocks_repeat_0, '0', epy_block_3, '1']
+- [blocks_vector_source_x_0_0_0_0_0, '0', blocks_repeat_0, '0']
+- [epy_block_0_0, '0', epy_block_0_1_1, '0']
+- [epy_block_0_1_0, '0', epy_block_0_0, '0']
+- [epy_block_3, '0', epy_block_0_1_0, '1']
+- [root_raised_cosine_filter_0, '0', epy_block_0_1_0, '0']
+- [root_raised_cosine_filter_0, '0', epy_block_3, '0']
+- [soapy_limesdr_source_0, '0', blocks_freqshift_cc_0, '0']
+
+metadata:
+  file_format: 1
+  grc_version: 3.10.5.1
